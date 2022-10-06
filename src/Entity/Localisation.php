@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LocalisationRepository;
@@ -31,9 +30,6 @@ class Localisation
     private ?int $departement_code = null;
 
     #[ORM\Column]
-    private ?int $region_code = null;
-
-    #[ORM\Column]
     private ?float $latitude = null;
 
     #[ORM\Column]
@@ -42,19 +38,19 @@ class Localisation
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updated_at = null;
+    #[ORM\Column]
+    private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'localisation_id')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'localisation')]
     private Collection $users;
 
-    #[ORM\OneToMany(mappedBy: 'localisation_id', targetEntity: Benne::class)]
-    private Collection $benne_id;
+    #[ORM\OneToMany(mappedBy: 'localisation', targetEntity: Benne::class)]
+    private Collection $bennes;
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
-        $this->benne_id = new ArrayCollection();
+        $this->bennes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,18 +106,6 @@ class Localisation
         return $this;
     }
 
-    public function getRegionCode(): ?int
-    {
-        return $this->region_code;
-    }
-
-    public function setRegionCode(int $region_code): self
-    {
-        $this->region_code = $region_code;
-
-        return $this;
-    }
-
     public function getLatitude(): ?float
     {
         return $this->latitude;
@@ -158,14 +142,14 @@ class Localisation
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updated_at): self
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
-        $this->updated_at = $updated_at;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -182,7 +166,7 @@ class Localisation
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->addLocalisationId($this);
+            $user->addLocalisation($this);
         }
 
         return $this;
@@ -191,7 +175,7 @@ class Localisation
     public function removeUser(User $user): self
     {
         if ($this->users->removeElement($user)) {
-            $user->removeLocalisationId($this);
+            $user->removeLocalisation($this);
         }
 
         return $this;
@@ -200,27 +184,27 @@ class Localisation
     /**
      * @return Collection<int, Benne>
      */
-    public function getBenneId(): Collection
+    public function getBennes(): Collection
     {
-        return $this->benne_id;
+        return $this->bennes;
     }
 
-    public function addBenneId(Benne $benneId): self
+    public function addBenne(Benne $benne): self
     {
-        if (!$this->benne_id->contains($benneId)) {
-            $this->benne_id->add($benneId);
-            $benneId->setLocalisationId($this);
+        if (!$this->bennes->contains($benne)) {
+            $this->bennes->add($benne);
+            $benne->setLocalisation($this);
         }
 
         return $this;
     }
 
-    public function removeBenneId(Benne $benneId): self
+    public function removeBenne(Benne $benne): self
     {
-        if ($this->benne_id->removeElement($benneId)) {
+        if ($this->bennes->removeElement($benne)) {
             // set the owning side to null (unless already changed)
-            if ($benneId->getLocalisationId() === $this) {
-                $benneId->setLocalisationId(null);
+            if ($benne->getLocalisation() === $this) {
+                $benne->setLocalisation(null);
             }
         }
 

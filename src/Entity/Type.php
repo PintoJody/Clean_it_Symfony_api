@@ -20,12 +20,12 @@ class Type
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'type_id', targetEntity: Benne::class)]
-    private Collection $benne;
+    #[ORM\OneToMany(mappedBy: 'type', targetEntity: Benne::class)]
+    private Collection $bennes;
 
     public function __construct()
     {
-        $this->benne = new ArrayCollection();
+        $this->bennes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -48,16 +48,16 @@ class Type
     /**
      * @return Collection<int, Benne>
      */
-    public function getBenne(): Collection
+    public function getBennes(): Collection
     {
-        return $this->benne;
+        return $this->bennes;
     }
 
     public function addBenne(Benne $benne): self
     {
-        if (!$this->benne->contains($benne)) {
-            $this->benne->add($benne);
-            $benne->setTypeId($this);
+        if (!$this->bennes->contains($benne)) {
+            $this->bennes->add($benne);
+            $benne->setType($this);
         }
 
         return $this;
@@ -65,10 +65,10 @@ class Type
 
     public function removeBenne(Benne $benne): self
     {
-        if ($this->benne->removeElement($benne)) {
+        if ($this->bennes->removeElement($benne)) {
             // set the owning side to null (unless already changed)
-            if ($benne->getTypeId() === $this) {
-                $benne->setTypeId(null);
+            if ($benne->getType() === $this) {
+                $benne->setType(null);
             }
         }
 

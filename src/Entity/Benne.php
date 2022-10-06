@@ -21,30 +21,30 @@ class Benne
     #[ORM\Column(length: 255)]
     private ?string $capacite = null;
 
-    #[ORM\ManyToOne(inversedBy: 'benne_id')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Localisation $localisation = null;
-
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updated_at = null;
+    private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'benne_id', targetEntity: Avis::class, orphanRemoval: true)]
-    private Collection $avis_id;
+    #[ORM\ManyToOne(inversedBy: 'bennes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Localisation $localisation = null;
 
-    #[ORM\OneToMany(mappedBy: 'benne_id', targetEntity: Signalement::class)]
-    private Collection $signalement_id;
-
-    #[ORM\ManyToOne(inversedBy: 'benne')]
+    #[ORM\ManyToOne(inversedBy: 'bennes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $type = null;
 
+    #[ORM\OneToMany(mappedBy: 'benne', targetEntity: Signalement::class)]
+    private Collection $signalements;
+
+    #[ORM\OneToMany(mappedBy: 'benne', targetEntity: Avis::class)]
+    private Collection $avis;
+
     public function __construct()
     {
-        $this->avis_id = new ArrayCollection();
-        $this->signalement_id = new ArrayCollection();
+        $this->signalements = new ArrayCollection();
+        $this->avis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -64,18 +64,6 @@ class Benne
         return $this;
     }
 
-    public function getLocalisationId(): ?Localisation
-    {
-        return $this->localisation_id;
-    }
-
-    public function setLocalisationId(?Localisation $localisation_id): self
-    {
-        $this->localisation_id = $localisation_id;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -90,42 +78,36 @@ class Benne
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updated_at): self
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
-        $this->updated_at = $updated_at;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Avis>
-     */
-    public function getAvisId(): Collection
+    public function getLocalisation(): ?Localisation
     {
-        return $this->avis_id;
+        return $this->localisation;
     }
 
-    public function addAvisId(Avis $avisId): self
+    public function setLocalisation(?Localisation $localisation): self
     {
-        if (!$this->avis_id->contains($avisId)) {
-            $this->avis_id->add($avisId);
-            $avisId->setBenneId($this);
-        }
+        $this->localisation = $localisation;
 
         return $this;
     }
 
-    public function removeAvisId(Avis $avisId): self
+    public function getType(): ?Type
     {
-        if ($this->avis_id->removeElement($avisId)) {
-            // set the owning side to null (unless already changed)
-            if ($avisId->getBenneId() === $this) {
-                $avisId->setBenneId(null);
-            }
-        }
+        return $this->type;
+    }
+
+    public function setType(?Type $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
@@ -133,43 +115,60 @@ class Benne
     /**
      * @return Collection<int, Signalement>
      */
-    public function getSignalementId(): Collection
+    public function getSignalements(): Collection
     {
-        return $this->signalement_id;
+        return $this->signalements;
     }
 
-    public function addSignalementId(Signalement $signalementId): self
+    public function addSignalement(Signalement $signalement): self
     {
-        if (!$this->signalement_id->contains($signalementId)) {
-            $this->signalement_id->add($signalementId);
-            $signalementId->setBenneId($this);
+        if (!$this->signalements->contains($signalement)) {
+            $this->signalements->add($signalement);
+            $signalement->setBenne($this);
         }
 
         return $this;
     }
 
-    public function removeSignalementId(Signalement $signalementId): self
+    public function removeSignalement(Signalement $signalement): self
     {
-        if ($this->signalement_id->removeElement($signalementId)) {
+        if ($this->signalements->removeElement($signalement)) {
             // set the owning side to null (unless already changed)
-            if ($signalementId->getBenneId() === $this) {
-                $signalementId->setBenneId(null);
+            if ($signalement->getBenne() === $this) {
+                $signalement->setBenne(null);
             }
         }
 
         return $this;
     }
 
-    public function getTypeId(): ?Type
+    /**
+     * @return Collection<int, Avis>
+     */
+    public function getAvis(): Collection
     {
-        return $this->type_id;
+        return $this->avis;
     }
 
-    public function setTypeId(?Type $type_id): self
+    public function addAvi(Avis $avi): self
     {
-        $this->type_id = $type_id;
+        if (!$this->avis->contains($avi)) {
+            $this->avis->add($avi);
+            $avi->setBenne($this);
+        }
 
         return $this;
     }
 
+    public function removeAvi(Avis $avi): self
+    {
+        if ($this->avis->removeElement($avi)) {
+            // set the owning side to null (unless already changed)
+            if ($avi->getBenne() === $this) {
+                $avi->setBenne(null);
+            }
+        }
+
+        return $this;
+    }
 }

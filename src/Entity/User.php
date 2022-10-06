@@ -2,76 +2,62 @@
 
 namespace App\Entity;
 
-
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity('email')]
-#[ApiResource(
-    normalizationContext: ['groups' => ['read:collection']]
-)]
-#[ORM\Table(name: '`user`')]
-class User
+#[ApiResource()]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:collection'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['read:collection'])]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['read:collection'])]
+    #[ORM\Column]
+    private array $roles = [];
+
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:collection'])]
     private ?string $name = null;
 
-    #[ORM\Column]
-    #[Groups(['read:collection'])]
-    private array $role = [];
+    #[ORM\Column(nullable: true)]
+    private ?int $nbrTrajet = null;
 
     #[ORM\Column]
-    private ?int $ban = null;
-
-    #[ORM\Column]
-    private ?int $nbr_trajet = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updated_at = null;
+    private ?bool $ban = null;
 
     #[ORM\ManyToMany(targetEntity: Badge::class, inversedBy: 'users')]
-    private Collection $badge_id;
+    private Collection $badges;
 
     #[ORM\ManyToMany(targetEntity: Localisation::class, inversedBy: 'users')]
-    private Collection $localisation_id;
+    private Collection $localisation;
 
-    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Avis::class)]
-    private Collection $avis_id;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Signalement::class)]
+    private Collection $signalements;
 
-    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Signalement::class)]
-    private Collection $signalement_id;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Avis::class)]
+    private Collection $avis;
 
     public function __construct()
     {
-        $this->badge_id = new ArrayCollection();
-        $this->localisation_id = new ArrayCollection();
-        $this->avis_id = new ArrayCollection();
-        $this->signalement_id = new ArrayCollection();
+        $this->badges = new ArrayCollection();
+        $this->localisation = new ArrayCollection();
+        $this->signalements = new ArrayCollection();
+        $this->avis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,7 +77,39 @@ class User
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -101,6 +119,15 @@ class User
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getName(): ?string
@@ -115,62 +142,26 @@ class User
         return $this;
     }
 
-    public function getRole(): array
+    public function getNbrTrajet(): ?int
     {
-        return $this->role;
+        return $this->nbrTrajet;
     }
 
-    public function setRole(array $role): self
+    public function setNbrTrajet(?int $nbrTrajet): self
     {
-        $this->role = $role;
+        $this->nbrTrajet = $nbrTrajet;
 
         return $this;
     }
 
-    public function getBan(): ?int
+    public function isBan(): ?bool
     {
         return $this->ban;
     }
 
-    public function setBan(int $ban): self
+    public function setBan(bool $ban): self
     {
         $this->ban = $ban;
-
-        return $this;
-    }
-
-    public function getNbrTrajet(): ?int
-    {
-        return $this->nbr_trajet;
-    }
-
-    public function setNbrTrajet(int $nbr_trajet): self
-    {
-        $this->nbr_trajet = $nbr_trajet;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updated_at;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updated_at): self
-    {
-        $this->updated_at = $updated_at;
 
         return $this;
     }
@@ -178,23 +169,23 @@ class User
     /**
      * @return Collection<int, Badge>
      */
-    public function getBadgeId(): Collection
+    public function getBadges(): Collection
     {
-        return $this->badge_id;
+        return $this->badges;
     }
 
-    public function addBadgeId(Badge $badgeId): self
+    public function addBadge(Badge $badge): self
     {
-        if (!$this->badge_id->contains($badgeId)) {
-            $this->badge_id->add($badgeId);
+        if (!$this->badges->contains($badge)) {
+            $this->badges->add($badge);
         }
 
         return $this;
     }
 
-    public function removeBadgeId(Badge $badgeId): self
+    public function removeBadge(Badge $badge): self
     {
-        $this->badge_id->removeElement($badgeId);
+        $this->badges->removeElement($badge);
 
         return $this;
     }
@@ -202,53 +193,23 @@ class User
     /**
      * @return Collection<int, Localisation>
      */
-    public function getLocalisationId(): Collection
+    public function getLocalisation(): Collection
     {
-        return $this->localisation_id;
+        return $this->localisation;
     }
 
-    public function addLocalisationId(Localisation $localisationId): self
+    public function addLocalisation(Localisation $localisation): self
     {
-        if (!$this->localisation_id->contains($localisationId)) {
-            $this->localisation_id->add($localisationId);
+        if (!$this->localisation->contains($localisation)) {
+            $this->localisation->add($localisation);
         }
 
         return $this;
     }
 
-    public function removeLocalisationId(Localisation $localisationId): self
+    public function removeLocalisation(Localisation $localisation): self
     {
-        $this->localisation_id->removeElement($localisationId);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Avis>
-     */
-    public function getAvisId(): Collection
-    {
-        return $this->avis_id;
-    }
-
-    public function addAvisId(Avis $avisId): self
-    {
-        if (!$this->avis_id->contains($avisId)) {
-            $this->avis_id->add($avisId);
-            $avisId->setUserId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAvisId(Avis $avisId): self
-    {
-        if ($this->avis_id->removeElement($avisId)) {
-            // set the owning side to null (unless already changed)
-            if ($avisId->getUserId() === $this) {
-                $avisId->setUserId(null);
-            }
-        }
+        $this->localisation->removeElement($localisation);
 
         return $this;
     }
@@ -256,27 +217,57 @@ class User
     /**
      * @return Collection<int, Signalement>
      */
-    public function getSignalementId(): Collection
+    public function getSignalements(): Collection
     {
-        return $this->signalement_id;
+        return $this->signalements;
     }
 
-    public function addSignalementId(Signalement $signalementId): self
+    public function addSignalement(Signalement $signalement): self
     {
-        if (!$this->signalement_id->contains($signalementId)) {
-            $this->signalement_id->add($signalementId);
-            $signalementId->setUserId($this);
+        if (!$this->signalements->contains($signalement)) {
+            $this->signalements->add($signalement);
+            $signalement->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeSignalementId(Signalement $signalementId): self
+    public function removeSignalement(Signalement $signalement): self
     {
-        if ($this->signalement_id->removeElement($signalementId)) {
+        if ($this->signalements->removeElement($signalement)) {
             // set the owning side to null (unless already changed)
-            if ($signalementId->getUserId() === $this) {
-                $signalementId->setUserId(null);
+            if ($signalement->getUser() === $this) {
+                $signalement->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Avis>
+     */
+    public function getAvis(): Collection
+    {
+        return $this->avis;
+    }
+
+    public function addAvi(Avis $avi): self
+    {
+        if (!$this->avis->contains($avi)) {
+            $this->avis->add($avi);
+            $avi->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvi(Avis $avi): self
+    {
+        if ($this->avis->removeElement($avi)) {
+            // set the owning side to null (unless already changed)
+            if ($avi->getUser() === $this) {
+                $avi->setUser(null);
             }
         }
 

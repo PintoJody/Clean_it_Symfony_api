@@ -18,11 +18,11 @@ class Signalement
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'signalement_id')]
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'signalement_id')]
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Benne $benne = null;
 
@@ -43,26 +43,26 @@ class Signalement
         return $this;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(?User $user_id): self
+    public function setUser(?User $user): self
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getBenneId(): ?Benne
+    public function getBenne(): ?Benne
     {
-        return $this->benne_id;
+        return $this->benne;
     }
 
-    public function setBenneId(?Benne $benne_id): self
+    public function setBenne(?Benne $benne): self
     {
-        $this->benne_id = $benne_id;
+        $this->benne = $benne;
 
         return $this;
     }

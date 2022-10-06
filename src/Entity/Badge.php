@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\BadgeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BadgeRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: BadgeRepository::class)]
 #[ApiResource()]
@@ -26,7 +26,7 @@ class Badge
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'badge_id')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'badges')]
     private Collection $users;
 
     public function __construct()
@@ -87,7 +87,7 @@ class Badge
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->addBadgeId($this);
+            $user->addBadge($this);
         }
 
         return $this;
@@ -96,7 +96,7 @@ class Badge
     public function removeUser(User $user): self
     {
         if ($this->users->removeElement($user)) {
-            $user->removeBadgeId($this);
+            $user->removeBadge($this);
         }
 
         return $this;

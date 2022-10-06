@@ -16,13 +16,13 @@ class Avis
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $nbr_star = null;
+    private ?int $nbrStar = null;
 
-    #[ORM\ManyToOne(inversedBy: 'avis_id')]
+    #[ORM\ManyToOne(inversedBy: 'avis')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'avis_id')]
+    #[ORM\ManyToOne(inversedBy: 'avis')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Benne $benne = null;
 
@@ -33,36 +33,36 @@ class Avis
 
     public function getNbrStar(): ?int
     {
-        return $this->nbr_star;
+        return $this->nbrStar;
     }
 
-    public function setNbrStar(int $nbr_star): self
+    public function setNbrStar(int $nbrStar): self
     {
-        $this->nbr_star = $nbr_star;
+        $this->nbrStar = $nbrStar;
 
         return $this;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(?User $user_id): self
+    public function setUser(?User $user): self
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getBenneId(): ?Benne
+    public function getBenne(): ?Benne
     {
-        return $this->benne_id;
+        return $this->benne;
     }
 
-    public function setBenneId(?Benne $benne_id): self
+    public function setBenne(?Benne $benne): self
     {
-        $this->benne_id = $benne_id;
+        $this->benne = $benne;
 
         return $this;
     }
