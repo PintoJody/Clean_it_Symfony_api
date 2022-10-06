@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\AvisRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AvisRepository;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
+#[ApiResource()]
 class Avis
 {
     #[ORM\Id]

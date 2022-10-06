@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\SignalementRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\SignalementRepository;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
+#[ApiResource()]
 class Signalement
 {
     #[ORM\Id]

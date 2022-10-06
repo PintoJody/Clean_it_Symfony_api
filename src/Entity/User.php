@@ -2,31 +2,44 @@
 
 namespace App\Entity;
 
+
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity('email')]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:collection']]
+)]
 #[ORM\Table(name: '`user`')]
 class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:collection'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:collection'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:collection'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read:collection'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(['read:collection'])]
     private array $role = [];
 
     #[ORM\Column]
