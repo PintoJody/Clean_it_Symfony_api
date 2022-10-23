@@ -2,12 +2,20 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AvisRepository;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
 #[ApiResource()]
+#[Get()]
+#[Post(security: "is_granted('ROLE_USER')")]
+#[Put(security: "is_granted('ROLE_USER')")]
+#[Delete(security: "is_granted('ROLE_USER')")]
 class Avis
 {
     #[ORM\Id]
