@@ -1,68 +1,66 @@
 <?php
 
 namespace App\Entity;
-
+use App\State\UserProcessor;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Action\NotFoundAction;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Controller\MeController;
 use Symfony\Component\Security\Core\User\UserInterface;
-
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
-    collectionOperations: [
-        'me' => [
-            'pagination_enable' => false,
-            'path' => '/me',
-            'method' => 'get',
-            'controller' => MeController::class,
-            'read' => false,
-        ]
-    ],
-    itemOperations: [
-        'get' => [
-            'controller' => NotFoundAction::class,
-            'openapi_context' => ['summary' => 'hidden'],
-            'read' => false,
-            'output' => false
-        ]
-        ],
-    normalizationContext: ['groups' => ['read:User']]
+    processor: UserProcessor::class,
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
 )]
+#[Get(formats: ["json"])]
+#[Post()]
+#[Put()]
+#[Delete(security: "is_granted('ROLE_ADMIN')")]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:User'])]
     private ?int $id = null;
 
+    #[Groups(['write', 'read'])]
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['read:User'])]
     private ?string $email = null;
 
+    #[Groups('read')]
     #[ORM\Column]
-    #[Groups(['read:User'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
+    #[Groups(['read', 'write'])]
     #[ORM\Column]
     private ?string $password = null;
 
+    // #[SerializedName('password')]
+    #[Groups('write')]
+    private $plainPassword;
+
+    #[Groups(['write', 'read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
+    #[Groups(['write', 'read'])]
     #[ORM\Column(nullable: true)]
     private ?int $nbrTrajet = null;
 
+    #[Groups(['write', 'read'])]
     #[ORM\Column]
     private ?bool $ban = null;
 
@@ -147,13 +145,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
     /**
      * @see UserInterface
      */
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getName(): ?string
@@ -299,4 +307,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 }

@@ -2,12 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SignalementRepository;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 #[ApiResource()]
+#[Get(security: "is_granted('ROLE_ADMIN')", formats: ["json"])]
+#[Post(security: "is_granted('ROLE_USER')")]
+#[Delete(security: "is_granted('ROLE_ADMIN')")]
 class Signalement
 {
     #[ORM\Id]
