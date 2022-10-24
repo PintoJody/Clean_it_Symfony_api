@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: BadgeRepository::class)]
 #[ApiResource()]
-#[Get(security: "is_granted('ROLE_USER')")]
+#[Get(security: "is_granted('ROLE_USER')", formats: ["json"])]
 #[Post(security: "is_granted('ROLE_ADMIN')")]
 #[Put(security: "is_granted('ROLE_ADMIN')")]
 #[Delete(security: "is_granted('ROLE_ADMIN')")]

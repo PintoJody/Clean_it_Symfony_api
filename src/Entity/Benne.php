@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 #[ORM\Entity(repositoryClass: BenneRepository::class)]
 #[ApiResource()]
 #[Get()]
-#[Post(security: "is_granted('ROLE_ADMIN')")]
+#[Post(security: "is_granted('ROLE_ADMIN')", formats: ["json"])]
 #[Put(security: "is_granted('ROLE_ADMIN')")]
 #[Delete(security: "is_granted('ROLE_ADMIN')")]
 class Benne

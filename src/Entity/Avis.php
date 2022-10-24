@@ -12,7 +12,7 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
 #[ApiResource()]
-#[Get()]
+#[Get(formats: ["json"])]
 #[Post(security: "is_granted('ROLE_USER')")]
 #[Put(security: "is_granted('ROLE_USER')")]
 #[Delete(security: "is_granted('ROLE_USER')")]

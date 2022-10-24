@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: LocalisationRepository::class)]
 #[ApiResource()]
-#[Get(security: "is_granted('ROLE_USER')")]
+#[Get(security: "is_granted('ROLE_USER')", formats: ["json"])]
 #[Post(security: "is_granted('ROLE_USER')")]
 #[Put(security: "is_granted('ROLE_USER')")]
 #[Delete(security: "is_granted('ROLE_ADMIN')")]

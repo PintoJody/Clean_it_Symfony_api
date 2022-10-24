@@ -12,7 +12,7 @@ use App\Repository\SignalementRepository;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 #[ApiResource()]
-#[Get(security: "is_granted('ROLE_ADMIN')")]
+#[Get(security: "is_granted('ROLE_ADMIN')", formats: ["json"])]
 #[Post(security: "is_granted('ROLE_USER')")]
 #[Delete(security: "is_granted('ROLE_ADMIN')")]
 class Signalement
