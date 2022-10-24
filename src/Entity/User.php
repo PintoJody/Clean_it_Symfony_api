@@ -8,23 +8,29 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
-    processor: UserProcessor::class,
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
+    operations:[
+        new Get(),
+        new GetCollection(formats: ["json"]),
+        new Post(processor: UserProcessor::class),
+        new Put(),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ]
 )]
-#[Get(formats: ["json"])]
-#[Post()]
-#[Put()]
-#[Delete(security: "is_granted('ROLE_ADMIN')")]
+#[ApiFilter(BooleanFilter::class, properties: ['ban'])]
 
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
