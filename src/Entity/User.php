@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     denormalizationContext: ['groups' => ['user:write']],
     operations:[
         new Get(),
-        new GetCollection(formats: ["json"]),
+        new GetCollection(),
         new Post(processor: UserProcessor::class),
         new Put(),
         new Delete(security: "is_granted('ROLE_ADMIN')")

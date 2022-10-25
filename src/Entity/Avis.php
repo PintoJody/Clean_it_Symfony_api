@@ -9,13 +9,22 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AvisRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
-#[ApiResource()]
-#[Get(formats: ["json"])]
-#[Post(security: "is_granted('ROLE_USER')")]
-#[Put(security: "is_granted('ROLE_USER')")]
-#[Delete(security: "is_granted('ROLE_USER')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['avis:read']],
+    denormalizationContext: ['groups' => ['avis:write']],
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Put(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ]
+)]
+
 class Avis
 {
     #[ORM\Id]
@@ -23,13 +32,16 @@ class Avis
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['avis:write', 'avis:read'])]
     #[ORM\Column]
     private ?int $nbrStar = null;
 
+    #[Groups(['avis:write', 'avis:read', 'user:read'])]
     #[ORM\ManyToOne(inversedBy: 'avis')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[Groups(['avis:write', 'avis:read', 'benne:read'])]
     #[ORM\ManyToOne(inversedBy: 'avis')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Benne $benne = null;

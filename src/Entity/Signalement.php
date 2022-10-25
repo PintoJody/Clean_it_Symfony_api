@@ -8,13 +8,23 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\SignalementRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
-#[ApiResource()]
-#[Get(security: "is_granted('ROLE_ADMIN')", formats: ["json"])]
-#[Post(security: "is_granted('ROLE_USER')")]
-#[Delete(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['signalement:read']],
+    denormalizationContext: ['groups' => ['signalement:write']],
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Put(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ]
+)]
+
 class Signalement
 {
     #[ORM\Id]
@@ -22,13 +32,16 @@ class Signalement
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['signalement:write', 'signalement:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Groups(['signalement:write', 'signalement:read', 'user:read'])]
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[Groups(['signalement:write', 'signalement:read', 'benne:read'])]
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Benne $benne = null;

@@ -10,15 +10,24 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BenneRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BenneRepository::class)]
-#[ApiResource()]
-#[Get()]
-#[Post(security: "is_granted('ROLE_ADMIN')", formats: ["json"])]
-#[Put(security: "is_granted('ROLE_ADMIN')")]
-#[Delete(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['benne:read']],
+    denormalizationContext: ['groups' => ['benne:write']],
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Put(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ]
+)]
+
 class Benne
 {
     #[ORM\Id]
@@ -26,19 +35,24 @@ class Benne
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['benne:write', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $capacite = null;
 
+    #[Groups(['benne:write', 'benne:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Groups(['benne:write', 'benne:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[Groups(['benne:write', 'benne:read', 'localisation:read'])]
     #[ORM\ManyToOne(inversedBy: 'bennes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Localisation $localisation = null;
 
+    #[Groups(['benne:write', 'benne:read', 'type:read'])]
     #[ORM\ManyToOne(inversedBy: 'bennes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $type = null;

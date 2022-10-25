@@ -35,28 +35,28 @@ class Localisation
     private ?int $id = null;
 
     #[Groups(['localisation:write', 'localisation:read'])]
-    #[ORM\Column(length: 255)]
-    private ?string $city_name = null;
-
-    #[Groups(['localisation:write', 'localisation:read'])]
-    #[ORM\Column(length: 255)]
-    private ?string $departement_name = null;
-
-    #[Groups(['localisation:write', 'localisation:read'])]
-    #[ORM\Column(length: 255)]
-    private ?string $region_name = null;
-
-    #[Groups(['localisation:write', 'localisation:read'])]
-    #[ORM\Column]
-    private ?int $departement_code = null;
-
-    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
     private ?float $latitude = null;
 
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
     private ?float $longitude = null;
+
+    #[Groups(['localisation:write', 'localisation:read'])]
+    #[ORM\Column(length: 255)]
+    private ?string $cityName = null;
+
+    #[Groups(['localisation:write', 'localisation:read'])]
+    #[ORM\Column(length: 255)]
+    private ?string $departementName = null;
+
+    #[Groups(['localisation:write', 'localisation:read'])]
+    #[ORM\Column(length: 255)]
+    private ?string $regionName = null;
+
+    #[Groups(['localisation:write', 'localisation:read'])]
+    #[ORM\Column(length: 255)]
+    private ?string $departementCode = null;
 
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
@@ -85,48 +85,48 @@ class Localisation
 
     public function getCityName(): ?string
     {
-        return $this->city_name;
+        return $this->cityName;
     }
 
-    public function setCityName(string $city_name): self
+    public function setCityName(string $cityName): self
     {
-        $this->city_name = $city_name;
+        $this->cityName = $cityName;
 
         return $this;
     }
 
     public function getDepartementName(): ?string
     {
-        return $this->departement_name;
+        return $this->departementName;
     }
 
-    public function setDepartementName(string $departement_name): self
+    public function setDepartementName(string $departementName): self
     {
-        $this->departement_name = $departement_name;
+        $this->departementName = $departementName;
 
         return $this;
     }
 
     public function getRegionName(): ?string
     {
-        return $this->region_name;
+        return $this->regionName;
     }
 
-    public function setRegionName(string $region_name): self
+    public function setRegionName(string $regionName): self
     {
-        $this->region_name = $region_name;
+        $this->regionName = $regionName;
 
         return $this;
     }
 
     public function getDepartementCode(): ?int
     {
-        return $this->departement_code;
+        return $this->departementCode;
     }
 
-    public function setDepartementCode(int $departement_code): self
+    public function setDepartementCode(int $departementCode): self
     {
-        $this->departement_code = $departement_code;
+        $this->departementCode = $departementCode;
 
         return $this;
     }

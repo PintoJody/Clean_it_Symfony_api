@@ -9,15 +9,24 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TypeRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TypeRepository::class)]
-#[ApiResource()]
-#[Get(formats: ["json"])]
-#[Post(security: "is_granted('ROLE_ADMIN')")]
-#[Put(security: "is_granted('ROLE_ADMIN')")]
-#[Delete(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['type:read']],
+    denormalizationContext: ['groups' => ['type:write']],
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Put(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ]
+)]
+
 class Type
 {
     #[ORM\Id]
@@ -25,6 +34,7 @@ class Type
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['type:write', 'type:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
