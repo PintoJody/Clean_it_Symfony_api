@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use ApiPlatform\State\ProcessorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserProcessor implements ProcessorInterface
+class UserRegisterProcessor implements ProcessorInterface
 {
     private $entityManager;
     private $passwordHasher;
@@ -26,9 +26,9 @@ class UserProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
-        if ($data->getPassword()) {
+        if ($data->getPlainPassword()) {
             $data->setPassword(
-                $this->passwordHasher->hashPassword($data, $data->getPassword())
+                $this->passwordHasher->hashPassword($data, $data->getPlainPassword())
             );
             $data->eraseCredentials();
         }

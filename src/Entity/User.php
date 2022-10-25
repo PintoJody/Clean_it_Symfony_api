@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Entity;
-use App\State\UserProcessor;
+
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
@@ -9,13 +9,16 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiFilter;
+use App\State\UserRegisterProcessor;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\State\UserUpdatePasswordProcessor;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -25,8 +28,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     operations:[
         new Get(),
         new GetCollection(),
-        new Post(processor: UserProcessor::class),
-        new Put(),
+        new Post(processor: UserRegisterProcessor::class),
+        new Put(security: "is_granted('ROLE_USER') and object == user", processor: UserUpdatePasswordProcessor::class),
         new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
@@ -40,6 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[Groups(['user:write', 'user:read'])]
+    #[Assert\Email(
+        message: 'Le mail {{ value }} n\'est pas un mail valide.',
+    )]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
@@ -54,7 +60,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    // #[SerializedName('password')]
     #[Groups('user:write')]
     private $plainPassword;
 
@@ -83,6 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Avis::class)]
     private Collection $avis;
+
 
     public function __construct()
     {
@@ -315,5 +321,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
 }
