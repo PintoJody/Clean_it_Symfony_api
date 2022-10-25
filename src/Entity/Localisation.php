@@ -44,6 +44,10 @@ class Localisation
 
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
+    private ?string $adress = null;
+
+    #[Groups(['localisation:write', 'localisation:read'])]
+    #[ORM\Column(length: 255)]
     private ?string $cityName = null;
 
     #[Groups(['localisation:write', 'localisation:read'])]
@@ -71,6 +75,7 @@ class Localisation
 
     #[ORM\OneToMany(mappedBy: 'localisation', targetEntity: Benne::class)]
     private Collection $bennes;
+
 
     public function __construct()
     {
@@ -232,6 +237,18 @@ class Localisation
                 $benne->setLocalisation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAdress(): ?string
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(string $adress): self
+    {
+        $this->adress = $adress;
 
         return $this;
     }
