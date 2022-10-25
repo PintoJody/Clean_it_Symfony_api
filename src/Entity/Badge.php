@@ -9,15 +9,24 @@ use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BadgeRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BadgeRepository::class)]
-#[ApiResource()]
-#[Get(security: "is_granted('ROLE_USER')", formats: ["json"])]
-#[Post(security: "is_granted('ROLE_ADMIN')")]
-#[Put(security: "is_granted('ROLE_ADMIN')")]
-#[Delete(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['badge:read']],
+    denormalizationContext: ['groups' => ['badge:write']],
+    operations:[
+        new Get(security: "is_granted('ROLE_USER')"),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Put(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ]
+)]
+
 class Badge
 {
     #[ORM\Id]
@@ -25,12 +34,15 @@ class Badge
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['badge:write', 'badge:read'])]
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
+    #[Groups(['badge:write', 'badge:read'])]
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
+    #[Groups(['badge:write', 'badge:read'])]
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 

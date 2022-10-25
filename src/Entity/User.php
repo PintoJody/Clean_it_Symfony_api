@@ -20,8 +20,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read']],
-    denormalizationContext: ['groups' => ['write']],
+    normalizationContext: ['groups' => ['user:read']],
+    denormalizationContext: ['groups' => ['user:write']],
     operations:[
         new Get(),
         new GetCollection(formats: ["json"]),
@@ -39,41 +39,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['write', 'read'])]
+    #[Groups(['user:write', 'user:read'])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[Groups('read')]
+    #[Groups('user:read')]
     #[ORM\Column]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[Groups(['read', 'write'])]
+    #[Groups(['user:read', 'user:write'])]
     #[ORM\Column]
     private ?string $password = null;
 
     // #[SerializedName('password')]
-    #[Groups('write')]
+    #[Groups('user:write')]
     private $plainPassword;
 
-    #[Groups(['write', 'read'])]
+    #[Groups(['user:write', 'user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
-    #[Groups(['write', 'read'])]
+    #[Groups(['user:write', 'user:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $nbrTrajet = null;
 
-    #[Groups(['write', 'read'])]
+    #[Groups(['user:write', 'user:read'])]
     #[ORM\Column]
     private ?bool $ban = null;
 
     #[ORM\ManyToMany(targetEntity: Badge::class, inversedBy: 'users')]
+    #[Groups(['user:write', 'user:read', 'badge:read'])]
     private Collection $badges;
 
     #[ORM\ManyToMany(targetEntity: Localisation::class, inversedBy: 'users')]
+    #[Groups(['user:write', 'user:read', 'localisation:read'])]
     private Collection $localisation;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Signalement::class)]

@@ -8,16 +8,25 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\LocalisationRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LocalisationRepository::class)]
-#[ApiResource()]
-#[Get(security: "is_granted('ROLE_USER')", formats: ["json"])]
-#[Post(security: "is_granted('ROLE_USER')")]
-#[Put(security: "is_granted('ROLE_USER')")]
-#[Delete(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['localisation:read']],
+    denormalizationContext: ['groups' => ['localisation:write']],
+    operations:[
+        new Get(security: "is_granted('ROLE_USER')"),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_USER')"),
+        new Put(security: "is_granted('ROLE_USER')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ]
+)]
+
 class Localisation
 {
     #[ORM\Id]
@@ -25,27 +34,35 @@ class Localisation
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $city_name = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $departement_name = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $region_name = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
     private ?int $departement_code = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
     private ?float $latitude = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
     private ?float $longitude = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
