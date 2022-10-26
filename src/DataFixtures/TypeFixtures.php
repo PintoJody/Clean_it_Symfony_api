@@ -10,7 +10,7 @@ class TypeFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $typesArray = ["Verre", "Textile", "Ordure", "Platique", "Papier", "Metal", "Carton", "Dechetterie"];
+        $typesArray = ["Verre", "Textile", "Ordure", "Plastique", "Papier", "Metal", "Carton", "Dechetterie"];
 
         foreach($typesArray as $item){
             $types = new Type();
