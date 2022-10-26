@@ -15,7 +15,9 @@ use ApiPlatform\Metadata\GetCollection;
 use App\State\UserUpdatePasswordProcessor;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,7 +36,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
         new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and object == user")
     ]
 )]
-#[ApiFilter(BooleanFilter::class, properties: ['ban'])]
+#[ApiFilter(SearchFilter::class, properties: ['statut'])]
 #[UniqueEntity('email', message: "Cet utilisateur existe déjà.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -63,12 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups('user:write')]
     private $plainPassword;
 
-    #[Assert\Length(
-        min: 2,
-        max: 150,
-        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
-        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
-    )]
+    
     #[Groups(['user:write', 'user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
@@ -81,9 +78,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $nbrTrajet = null;
 
-    #[Groups(['user:write', 'user:read'])]
-    #[ORM\Column]
-    private ?bool $ban = null;
 
     #[ORM\ManyToMany(targetEntity: Badge::class, inversedBy: 'users')]
     #[Groups(['user:write', 'user:read', 'badge:read'])]
@@ -98,6 +92,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Avis::class)]
     private Collection $avis;
+
+    #[Groups(['user:write', 'user:read', 'statut:read'])]
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Statut $statut = null;
 
 
     public function __construct()
@@ -212,17 +211,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isBan(): ?bool
-    {
-        return $this->ban;
-    }
-
-    public function setBan(bool $ban): self
-    {
-        $this->ban = $ban;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Badge>
@@ -328,6 +316,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $avi->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStatut(): ?Statut
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?Statut $statut): self
+    {
+        $this->statut = $statut;
 
         return $this;
     }
