@@ -43,12 +43,7 @@ class Localisation
     #[ORM\Column]
     private ?float $longitude = null;
 
-    #[Assert\Length(
-        min: 2,
-        max: 255,
-        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
-        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
-    )]
+    
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $adress = null;
@@ -83,10 +78,6 @@ class Localisation
     #[ORM\Column(length: 255)]
     private ?string $regionName = null;
 
-    #[Assert\Type(
-        type: 'integer',
-        message: 'La valeur {{ value }} n\'est pas de type {{ type }}.',
-    )]
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $departementCode = null;
