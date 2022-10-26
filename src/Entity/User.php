@@ -43,9 +43,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[Groups(['user:write', 'user:read'])]
-    #[Assert\Email(
-        message: 'Le mail {{ value }} n\'est pas un mail valide.',
-    )]
+    #[Assert\Email(message: 'Le mail {{ value }} n\'est pas un mail valide.')]
+    #[Assert\NotBlank(message: 'L\'email doit être renseigné.')]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
@@ -56,17 +55,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[Groups(['user:read', 'user:write'])]
     #[ORM\Column]
     private ?string $password = null;
 
+    #[Assert\NotBlank(message: 'Le mot de passe doit être renseigné.')]
     #[Groups('user:write')]
     private $plainPassword;
 
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['user:write', 'user:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
 
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La valeur {{ value }} n\'est pas de type {{ type }}.',
+    )]
     #[Groups(['user:write', 'user:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $nbrTrajet = null;

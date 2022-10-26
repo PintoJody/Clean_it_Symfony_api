@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BenneRepository::class)]
 #[ApiResource(
@@ -35,6 +36,10 @@ class Benne
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La valeur {{ value }} n\'est pas de type {{ type }}.',
+    )]
     #[Groups(['benne:write', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $capacite = null;

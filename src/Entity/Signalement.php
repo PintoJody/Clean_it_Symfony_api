@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\SignalementRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SignalementRepository::class)]
 #[ApiResource(
@@ -32,6 +33,12 @@ class Signalement
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['signalement:write', 'signalement:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;

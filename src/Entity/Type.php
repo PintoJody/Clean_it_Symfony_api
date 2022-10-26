@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\TypeRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
@@ -34,6 +35,12 @@ class Type
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['type:write', 'type:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;

@@ -13,6 +13,7 @@ use App\Repository\LocalisationRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LocalisationRepository::class)]
 #[ApiResource(
@@ -42,22 +43,50 @@ class Localisation
     #[ORM\Column]
     private ?float $longitude = null;
 
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $adress = null;
 
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $cityName = null;
 
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $departementName = null;
 
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $regionName = null;
 
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La valeur {{ value }} n\'est pas de type {{ type }}.',
+    )]
     #[Groups(['localisation:write', 'localisation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $departementCode = null;

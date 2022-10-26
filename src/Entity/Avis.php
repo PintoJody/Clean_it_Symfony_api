@@ -11,6 +11,7 @@ use App\Repository\AvisRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
 #[ApiResource(
@@ -32,6 +33,16 @@ class Avis
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La valeur {{ value }} n\'est pas de type {{ type }}.',
+    )]
+    #[Assert\Length(
+        min: 0,
+        max: 5,
+        minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
+        maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
+    )]
     #[Groups(['avis:write', 'avis:read'])]
     #[ORM\Column]
     private ?int $nbrStar = null;
