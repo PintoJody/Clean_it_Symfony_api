@@ -29,8 +29,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
         new Get(),
         new GetCollection(),
         new Post(processor: UserRegisterProcessor::class),
-        new Put(security: "is_granted('ROLE_USER') and object == user", processor: UserUpdatePasswordProcessor::class),
-        new Delete(security: "is_granted('ROLE_ADMIN')")
+        new Put(security: "is_granted('ROLE_USER') and object == user or is_granted('ROLE_ADMIN')", processor: UserUpdatePasswordProcessor::class),
+        new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and object == user")
     ]
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['ban'])]
