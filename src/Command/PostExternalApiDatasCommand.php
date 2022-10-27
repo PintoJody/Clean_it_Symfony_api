@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Repository\EtatBenneRepository;
+use App\Repository\LocalisationRepository;
 use App\Repository\TypeRepository;
 use App\Service\SGetOpenDatasApi;
 use App\Service\SGetToken;
@@ -28,10 +29,11 @@ class PostExternalApiDatasCommand extends Command
     private $sGetOpenDatasApi;
     private $sSendDatas;
     private $typeRepo;
+    private $localisationRepo;
     private $etatBenneRepo;
     private $manager;
 
-    public function __construct(HttpClientInterface $httpClient, TypeRepository $typeRepository, EtatBenneRepository $etatBenneRepository, ManagerRegistry $doctrine)
+    public function __construct(HttpClientInterface $httpClient, TypeRepository $typeRepository, LocalisationRepository $localisationRepository ,EtatBenneRepository $etatBenneRepository, ManagerRegistry $doctrine)
     {
         $this->client = $httpClient;
         $this->sGetToken = new SGetToken();
@@ -39,6 +41,7 @@ class PostExternalApiDatasCommand extends Command
         $this->sSendDatas = new SSendDatas();
         $this->typeRepo = $typeRepository;
         $this->etatBenneRepo = $etatBenneRepository;
+        $this->localisationRepo = $localisationRepository;
         $this->manager = $doctrine;
 
         parent::__construct();
@@ -73,7 +76,7 @@ class PostExternalApiDatasCommand extends Command
                 $io->note(sprintf("Send in progress ..."));
 
                 foreach($datasVerre as $datas){
-                    $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->manager->getManager());
+                    $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->localisationRepo ,$this->manager->getManager());
                 }
 
                 $io->note(sprintf("Data added successfully !"));
