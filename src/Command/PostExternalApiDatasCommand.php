@@ -2,8 +2,12 @@
 
 namespace App\Command;
 
+use App\Repository\EtatBenneRepository;
+use App\Repository\TypeRepository;
 use App\Service\SGetOpenDatasApi;
 use App\Service\SGetToken;
+use App\Service\SSendDatas;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,12 +26,20 @@ class PostExternalApiDatasCommand extends Command
     private $bearerToken;
     private $sGetToken;
     private $sGetOpenDatasApi;
+    private $sSendDatas;
+    private $typeRepo;
+    private $etatBenneRepo;
+    private $manager;
 
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(HttpClientInterface $httpClient, TypeRepository $typeRepository, EtatBenneRepository $etatBenneRepository, ManagerRegistry $doctrine)
     {
         $this->client = $httpClient;
         $this->sGetToken = new SGetToken();
         $this->sGetOpenDatasApi = new SGetOpenDatasApi();
+        $this->sSendDatas = new SSendDatas();
+        $this->typeRepo = $typeRepository;
+        $this->etatBenneRepo = $etatBenneRepository;
+        $this->manager = $doctrine;
 
         parent::__construct();
     }
@@ -52,22 +64,26 @@ class PostExternalApiDatasCommand extends Command
         if(!empty($this->bearerToken)){
             $io->note(sprintf("Authentication SUCCESS !"));
             //Get OpenDatasApi Paris with sGetOpenDatasApi Service
-            $datas = $this->sGetOpenDatasApi->getOpenDatasApi($this->client);
+            $datasVerre = $this->sGetOpenDatasApi->getOpenDatasApi($this->client);
 
-            if(!empty($datas)){
-                $io->note(sprintf("Data array is ready !"));
+            if(!empty($datasVerre)){
+                $io->note(sprintf("datasVerre array is ready !"));
+
+                //Send Datas
+                $io->note(sprintf("Send in progress ..."));
+
+                foreach($datasVerre as $datas){
+                    $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->manager->getManager());
+                }
+
+                $io->note(sprintf("Data added successfully !"));
             }else{
                 $io->note(sprintf("Error with SGetOpenDatasApi Service."));
             }
             
         }else{
-
             $io->note(sprintf("Authentication ERROR !"));
         }
-
-        //Send Datas
-
-        // $io->success('Data added successfully!');
 
         return Command::SUCCESS;
     }
