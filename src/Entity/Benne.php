@@ -36,10 +36,6 @@ class Benne
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\Type(
-        type: 'integer',
-        message: 'La valeur {{ value }} n\'est pas de type {{ type }}.',
-    )]
     #[Groups(['benne:write', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $capacite = null;
@@ -67,6 +63,11 @@ class Benne
 
     #[ORM\OneToMany(mappedBy: 'benne', targetEntity: Avis::class)]
     private Collection $avis;
+
+    #[Groups(['benne:write', 'benne:read', 'etatBenne:read'])]
+    #[ORM\ManyToOne(inversedBy: 'bennes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?EtatBenne $etat = null;
 
     public function __construct()
     {
@@ -195,6 +196,18 @@ class Benne
                 $avi->setBenne(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEtat(): ?EtatBenne
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?EtatBenne $etat): self
+    {
+        $this->etat = $etat;
 
         return $this;
     }

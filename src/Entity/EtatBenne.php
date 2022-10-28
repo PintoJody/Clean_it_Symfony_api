@@ -4,39 +4,39 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\StatutRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\Repository\EtatBenneRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: StatutRepository::class)]
+#[ORM\Entity(repositoryClass: EtatBenneRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['statut:read']],
-    denormalizationContext: ['groups' => ['statut:write']],
+    normalizationContext: ['groups' => ['etatBenne:read']],
+    denormalizationContext: ['groups' => ['etatBenne:write']],
     operations:[
         new Get(),
         new GetCollection(),
     ]
 )]
-class Statut
+class EtatBenne
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['statut:read'])]
+    #[Groups(['etatBenne:read', 'etatBenne:write'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'statut', targetEntity: User::class)]
-    private Collection $users;
+    #[ORM\OneToMany(mappedBy: 'etat', targetEntity: Benne::class)]
+    private Collection $bennes;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->bennes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -57,29 +57,29 @@ class Statut
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Benne>
      */
-    public function getUsers(): Collection
+    public function getBennes(): Collection
     {
-        return $this->users;
+        return $this->bennes;
     }
 
-    public function addUser(User $user): self
+    public function addBenne(Benne $benne): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setStatut($this);
+        if (!$this->bennes->contains($benne)) {
+            $this->bennes->add($benne);
+            $benne->setEtat($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeBenne(Benne $benne): self
     {
-        if ($this->users->removeElement($user)) {
+        if ($this->bennes->removeElement($benne)) {
             // set the owning side to null (unless already changed)
-            if ($user->getStatut() === $this) {
-                $user->setStatut(null);
+            if ($benne->getEtat() === $this) {
+                $benne->setEtat(null);
             }
         }
 
