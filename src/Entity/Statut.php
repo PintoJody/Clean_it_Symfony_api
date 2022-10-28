@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StatutRepository::class)]
 #[ApiResource(
@@ -26,6 +27,7 @@ class Statut
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['statut:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

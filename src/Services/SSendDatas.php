@@ -3,7 +3,6 @@ namespace App\Service;
 
 use App\Entity\Benne;
 use App\Entity\Localisation;
-use DateTime;
 use DateTimeImmutable;
 
 class SSendDatas
@@ -38,13 +37,36 @@ class SSendDatas
             $manager->flush();
         }
 
+        //Format datas etatBenne
+        if(strtoupper($array["etat"]) === "EN SERVICE" || $array["etat"] === ""){
+            $etat = $etatBenneRepo->findOneBy(['name' => 'disponible']);
+        }else{
+            $etat = $etatBenneRepo->findOneBy(['name' => 'indisponible']);
+        }
+        //Format datas typeBenne
+        if($array["type"] === "VERRE"){
+            $type = $typeRepo->findOneBy(['name' => 'Verre']);
+        }
+        elseif($array["type"] === "TEXTILE"){
+            $type = $typeRepo->findOneBy(['name' => 'Textile']);
+        }
+        elseif($array["type"] === "MENAGERS"){
+            $type = $typeRepo->findOneBy(['name' => 'Menagers']);
+        }
+        elseif($array["type"] === "RECYCLERIES"){
+            $type = $typeRepo->findOneBy(['name' => 'Recycleries']);
+        }
+        elseif($array["type"] === "COMPOSTEURS"){
+            $type = $typeRepo->findOneBy(['name' => 'Composteurs']);
+        }
+
         //Add BENNE
         $benne = new Benne();
         $benne
             ->setLocalisation($localisation)
             ->setCapacite("0")
-            ->setType($typeRepo->findOneBy(['name' => 'Verre']))
-            ->setEtat($etatBenneRepo->findOneBy(['name' => 'disponible']))
+            ->setType($type)
+            ->setEtat($etat)
             ->setCreatedAt(new DateTimeImmutable())
             ->setUpdatedAt(new DateTimeImmutable());
 

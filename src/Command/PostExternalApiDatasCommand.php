@@ -67,15 +67,40 @@ class PostExternalApiDatasCommand extends Command
         if(!empty($this->bearerToken)){
             $io->note(sprintf("Authentication SUCCESS !"));
             //Get OpenDatasApi Paris with sGetOpenDatasApi Service
-            $datasVerre = $this->sGetOpenDatasApi->getOpenDatasApi($this->client);
+            $datasVerre = $this->sGetOpenDatasApi->getOpenDatasApi($this->client, "dechets-menagers-points-dapport-volontaire-colonnes-a-verre");
+            $datasTextile = $this->sGetOpenDatasApi->getOpenDatasApi($this->client, "dechets-menagers-points-dapport-volontaire-conteneur-textile");
+            $datasMenagers = $this->sGetOpenDatasApi->getOpenDatasApi($this->client, "dechets-menagers-points-dapport-volontaire-stations-trilib");
+            $datasRecycleries = $this->sGetOpenDatasApi->getOpenDatasApi($this->client, "dechets-menagers-points-dapport-volontaire-recycleries-et-ressourceries");
+            $datasComposteurs = $this->sGetOpenDatasApi->getOpenDatasApi($this->client, "dechets-menagers-points-dapport-volontaire-composteurs");
 
             if(!empty($datasVerre)){
-                $io->note(sprintf("datasVerre array is ready !"));
+                $io->note(sprintf("All data tables are ready !"));
 
-                //Send Datas
-                $io->note(sprintf("Send in progress ..."));
-
+                ////// Send Datas //////
+                
+                //Send datas Verre
+                $io->note(sprintf("Send datas Verre ..."));
                 foreach($datasVerre as $datas){
+                    $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->localisationRepo ,$this->manager->getManager());
+                }
+                //Send datas Textile
+                $io->note(sprintf("Send datas Textile ..."));
+                foreach($datasTextile as $datas){
+                    $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->localisationRepo ,$this->manager->getManager());
+                }
+                //Send datas Menagers
+                $io->note(sprintf("Send datas Menagers ..."));
+                foreach($datasMenagers as $datas){
+                    $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->localisationRepo ,$this->manager->getManager());
+                }
+                //Send datas Recycleries
+                $io->note(sprintf("Send datas Recycleries ..."));
+                foreach($datasRecycleries as $datas){
+                    $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->localisationRepo ,$this->manager->getManager());
+                }
+                //Send datas Composteurs
+                $io->note(sprintf("Send datas Composteurs ..."));
+                foreach($datasComposteurs as $datas){
                     $this->sSendDatas->sendDatas($datas, $this->typeRepo, $this->etatBenneRepo, $this->localisationRepo ,$this->manager->getManager());
                 }
 
