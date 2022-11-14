@@ -5,8 +5,10 @@ namespace App\Entity;
 use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\StatutRepository;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -20,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['name'])]
 class Statut
 {
     #[ORM\Id]

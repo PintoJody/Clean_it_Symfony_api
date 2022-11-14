@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']],
     operations:[
-        new Get(),
+        new Get(security: "object == user or is_granted('ROLE_ADMIN')"),
         new GetCollection(),
         new Post(processor: UserRegisterProcessor::class),
         new Put(security: "is_granted('ROLE_USER') and object == user or is_granted('ROLE_ADMIN')", processor: UserUpdatePasswordProcessor::class),
