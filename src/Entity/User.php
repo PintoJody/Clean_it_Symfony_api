@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
@@ -31,7 +32,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     operations:[
         new Get(security: "object == user or is_granted('ROLE_ADMIN')"),
         new GetCollection(),
-        new Post(processor: UserRegisterProcessor::class),
+        new Patch(),
+        new Post(processor: UserRegisterProcessor::class, validationContext: ['groups' => ['Default', 'postValidation']]),
         new Put(security: "is_granted('ROLE_USER') and object == user or is_granted('ROLE_ADMIN')", processor: UserUpdatePasswordProcessor::class),
         new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') and object == user")
     ]
@@ -61,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[Assert\NotBlank(message: 'Le mot de passe doit être renseigné.')]
+    #[Assert\NotBlank(message: 'Le mot de passe doit être renseigné.', groups: ['postValidation'])]
     #[Groups('user:write')]
     private $plainPassword;
 
