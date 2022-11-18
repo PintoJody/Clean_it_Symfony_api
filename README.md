@@ -1,5 +1,8 @@
 ﻿# Clean_it_Symfony_api
 
+## Prérequis :
+    -> OpenSSL : installer fichier .exe Win64 OpenSSL v3.0.7 Light => https://slproweb.com/products/Win32OpenSSL.html
+
 ## Mise en place :
     => Lancer commande : 
 
@@ -10,8 +13,6 @@
         php bin/console doctrine:migrations:migrate
         php bin/console doctrine:fixtures:load
         php bin/console app:postExternalApiDatas admin@dev.com admin
-        
-        (Si probleme durant la generation de token => installer OpenSSL sur https://slproweb.com/products/Win32OpenSSL.html)
 
 ## Relation entre les entités :
     => Faire passer id unique (@id => exemple : api/user/1) dans le champs de relation.
