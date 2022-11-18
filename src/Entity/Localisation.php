@@ -35,16 +35,16 @@ class Localisation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['localisation:write', 'localisation:read'])]
+    #[Groups(['localisation:write', 'localisation:read', 'benne:read'])]
     #[ORM\Column]
     private ?float $latitude = null;
 
-    #[Groups(['localisation:write', 'localisation:read'])]
+    #[Groups(['localisation:write', 'localisation:read', 'benne:read'])]
     #[ORM\Column]
     private ?float $longitude = null;
 
     
-    #[Groups(['localisation:write', 'localisation:read'])]
+    #[Groups(['localisation:write', 'localisation:read', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $adress = null;
 
@@ -54,7 +54,7 @@ class Localisation
         minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
         maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
     )]
-    #[Groups(['localisation:write', 'localisation:read'])]
+    #[Groups(['localisation:write', 'localisation:read', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $cityName = null;
 
@@ -64,7 +64,7 @@ class Localisation
         minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
         maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
     )]
-    #[Groups(['localisation:write', 'localisation:read'])]
+    #[Groups(['localisation:write', 'localisation:read', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $departementName = null;
 
@@ -74,11 +74,11 @@ class Localisation
         minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
         maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
     )]
-    #[Groups(['localisation:write', 'localisation:read'])]
+    #[Groups(['localisation:write', 'localisation:read', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $regionName = null;
 
-    #[Groups(['localisation:write', 'localisation:read'])]
+    #[Groups(['localisation:write', 'localisation:read', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $departementCode = null;
 
