@@ -61,6 +61,7 @@ class Benne
     #[ORM\OneToMany(mappedBy: 'benne', targetEntity: Signalement::class)]
     private Collection $signalements;
 
+    #[Groups(['benne:write', 'benne:read', 'avis:read'])]
     #[ORM\OneToMany(mappedBy: 'benne', targetEntity: Avis::class)]
     private Collection $avis;
 

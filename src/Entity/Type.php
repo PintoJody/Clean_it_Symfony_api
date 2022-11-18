@@ -44,7 +44,7 @@ class Type
         minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
         maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
     )]
-    #[Groups(['type:write', 'type:read'])]
+    #[Groups(['type:write', 'type:read', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

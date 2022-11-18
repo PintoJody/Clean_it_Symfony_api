@@ -43,7 +43,7 @@ class Avis
         minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
         maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
     )]
-    #[Groups(['avis:write', 'avis:read'])]
+    #[Groups(['avis:write', 'avis:read', 'benne:read'])]
     #[ORM\Column]
     private ?int $nbrStar = null;
 

@@ -27,7 +27,7 @@ class EtatBenne
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['etatBenne:read', 'etatBenne:write'])]
+    #[Groups(['etatBenne:read', 'etatBenne:write', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

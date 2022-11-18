@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['localisation:read']],
     denormalizationContext: ['groups' => ['localisation:write']],
     operations:[
-        new Get(security: "is_granted('ROLE_USER')"),
+        new Get(),
         new GetCollection(),
         new Post(security: "is_granted('ROLE_USER')"),
         new Put(security: "is_granted('ROLE_USER')"),
