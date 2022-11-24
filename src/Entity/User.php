@@ -31,7 +31,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     denormalizationContext: ['groups' => ['user:write']],
     operations:[
         new Get(security: "object == user or is_granted('ROLE_ADMIN')"),
-        new GetCollection(),
+        new GetCollection(security: "is_granted('ROLE_ADMIN')"),
         new Patch(),
         new Post(processor: UserRegisterProcessor::class, validationContext: ['groups' => ['Default', 'postValidation']]),
         new Put(security: "is_granted('ROLE_USER') and object == user or is_granted('ROLE_ADMIN')", processor: UserUpdatePasswordProcessor::class),
