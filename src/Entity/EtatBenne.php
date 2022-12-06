@@ -10,6 +10,8 @@ use App\Repository\EtatBenneRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: EtatBenneRepository::class)]
 #[ApiResource(
@@ -20,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['name'])]
 class EtatBenne
 {
     #[ORM\Id]

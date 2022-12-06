@@ -13,9 +13,12 @@ use App\Repository\LocalisationRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LocalisationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext: ['groups' => ['localisation:read']],
     denormalizationContext: ['groups' => ['localisation:write']],
@@ -27,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
-
+#[ApiFilter(SearchFilter::class, properties: ['longitude', 'latitude'])]
 class Localisation
 {
     #[ORM\Id]
@@ -270,6 +273,13 @@ class Localisation
     {
         $this->adress = $adress;
 
+        return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue()
+    {
+        $this->createdAt = new \DateTimeImmutable();
         return $this;
     }
 }

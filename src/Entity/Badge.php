@@ -32,6 +32,7 @@ class Badge
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['badge:read'])]
     private ?int $id = null;
 
     #[Groups(['badge:write', 'badge:read'])]

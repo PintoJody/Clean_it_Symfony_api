@@ -32,6 +32,7 @@ class UserFixtures extends Fixture
             ->setEmail("admin@dev.com")
             ->setName("AdminDev")
             ->setPlainPassword($plainPassword)
+            ->setPicture("/assets/imgs/badge.png")
             ->setStatut($statut)
             ->setRoles(["ROLE_ADMIN"])
             ->setPassword($this->passwordHasher->hashPassword($user, $plainPassword))

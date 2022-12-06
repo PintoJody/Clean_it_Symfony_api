@@ -23,7 +23,7 @@ class SSendDatas
         }else{
             $localisation = new Localisation();
             $localisation
-                ->setAdress($array["adresse"])
+                ->setAdress(htmlspecialchars($array["adresse"]))
                 ->setLatitude($array["latitude"])
                 ->setLongitude($array["longitude"])
                 ->setDepartementCode($array["cp"])

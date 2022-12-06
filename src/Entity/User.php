@@ -45,6 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('user:read')]
     private ?int $id = null;
 
     #[Groups(['user:write', 'user:read'])]
@@ -53,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[Groups('user:read')]
+    #[Groups(['user:read', 'user:write'])]
     #[ORM\Column]
     private array $roles = [];
 
@@ -99,6 +100,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Statut $statut = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $picture = null;
 
 
     public function __construct()
@@ -330,6 +334,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStatut(?Statut $statut): self
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(string $picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }

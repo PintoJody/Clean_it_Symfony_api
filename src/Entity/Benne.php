@@ -13,6 +13,8 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
@@ -28,12 +30,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
-
+#[ApiFilter(SearchFilter::class, properties: ['localisation'])]
 class Benne
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['benne:read'])]
     private ?int $id = null;
 
     #[Groups(['benne:write', 'benne:read'])]
@@ -58,6 +61,7 @@ class Benne
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $type = null;
 
+    #[Groups(['signalement:read', 'benne:read'])]
     #[ORM\OneToMany(mappedBy: 'benne', targetEntity: Signalement::class)]
     private Collection $signalements;
 
