@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['localisation'])]
+#[ApiFilter(SearchFilter::class, properties: ['type.name', 'localisation.adress'])]
 class Benne
 {
     #[ORM\Id]
