@@ -26,6 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']],
@@ -102,6 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Statut $statut = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:write', 'user:read'])]
     private ?string $picture = null;
 
 
@@ -350,5 +352,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[ORM\PrePersist]
+    public function setPictureValue()
+    {
+        $this->picture = "/assets/imgs/badge.png";
+        return $this;
+    }
 
 }
