@@ -1,6 +1,7 @@
 api_platform:
     defaults:
         pagination_items_per_page: 100
+        pagination_client_enabled: true
     swagger:
          api_keys:
              JWT:
