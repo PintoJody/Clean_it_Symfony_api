@@ -39,11 +39,11 @@ class Signalement
         minMessage: 'Le nom doit faire {{ limit }} caractères minimum',
         maxMessage: 'Le nom doit faire {{ limit }} caractères maximum',
     )]
-    #[Groups(['signalement:write', 'signalement:read'])]
+    #[Groups(['signalement:write', 'signalement:read', 'benne:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['signalement:write', 'signalement:read', 'user:read'])]
+    #[Groups(['signalement:write', 'signalement:read', 'user:read', 'benne:read'])]
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;

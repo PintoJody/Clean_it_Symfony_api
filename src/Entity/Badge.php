@@ -11,6 +11,8 @@ use App\Repository\BadgeRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -18,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['badge:read']],
     denormalizationContext: ['groups' => ['badge:write']],
-    operations:[
+    operations: [
         new Get(security: "is_granted('ROLE_USER')"),
         new GetCollection(),
         new Post(security: "is_granted('ROLE_ADMIN')"),
@@ -26,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
-
+#[ApiFilter(SearchFilter::class, properties: ['identity'])]
 class Badge
 {
     #[ORM\Id]
@@ -35,20 +37,24 @@ class Badge
     #[Groups(['badge:read'])]
     private ?int $id = null;
 
-    #[Groups(['badge:write', 'badge:read'])]
+    #[Groups(['badge:write', 'badge:read', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
-    #[Groups(['badge:write', 'badge:read'])]
+    #[Groups(['badge:write', 'badge:read', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
-    #[Groups(['badge:write', 'badge:read'])]
+    #[Groups(['badge:write', 'badge:read', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'badges')]
     private Collection $users;
+
+    #[Groups(['badge:write', 'badge:read', 'user:read'])]
+    #[ORM\Column(length: 255)]
+    private ?string $identity = null;
 
     public function __construct()
     {
@@ -119,6 +125,18 @@ class Badge
         if ($this->users->removeElement($user)) {
             $user->removeBadge($this);
         }
+
+        return $this;
+    }
+
+    public function getIdentity(): ?string
+    {
+        return $this->identity;
+    }
+
+    public function setIdentity(string $identity): self
+    {
+        $this->identity = $identity;
 
         return $this;
     }
