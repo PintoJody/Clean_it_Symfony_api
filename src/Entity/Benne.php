@@ -61,7 +61,7 @@ class Benne
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $type = null;
 
-    #[Groups(['signalement:read', 'benne:read'])]
+    #[Groups(['signalement:read', 'benne:read', 'benne:write'])]
     #[ORM\OneToMany(mappedBy: 'benne', targetEntity: Signalement::class)]
     private Collection $signalements;
 

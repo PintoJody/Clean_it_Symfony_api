@@ -31,6 +31,7 @@ class Signalement
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['signalement:write', 'signalement:read', 'benne:read'])]
     private ?int $id = null;
 
     #[Assert\Length(
