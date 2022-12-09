@@ -80,7 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     #[Groups(['user:write', 'user:read'])]
     #[ORM\Column(nullable: true)]
-    private ?int $nbrTrajet = null;
+    private ?int $nbrTrajet = 0;
 
 
     #[ORM\ManyToMany(targetEntity: Badge::class, inversedBy: 'users')]
